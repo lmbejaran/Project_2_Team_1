@@ -1,0 +1,34 @@
+html,
+body {
+  padding: 0;
+  margin: 0;
+}
+
+.axis {
+  font: 14px sans-serif;
+}
+
+.line {
+  fill: none;
+  stroke: orange;
+  stroke-width: 2px;
+}
+
+.line2 {
+    fill: none;
+    stroke: lightcoral;
+    stroke-width: 2px;
+  }
+/* .line {
+    fill: none;
+    stroke-width: 2px;
+  }
+  
+  .orange {
+    stroke: orange;
+  }
+  
+  .green {
+    stroke: green;
+  } */
+  
