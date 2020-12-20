@@ -22,11 +22,9 @@ var svg = d3
   .attr("class", "chart");
 
 // Set the radius for each dot that will appear in the graph.
-// Note: Making this a function allows us to easily call
-// it in the mobility section of our code.
 var circRadius;
 function crGet() {
-  if (width <= 530) {
+  if (width >= 530) {
     circRadius = 5;
   }
   else {
@@ -35,19 +33,12 @@ function crGet() {
 }
 crGet();
 
-// The Labels for our Axes
+// X Axis
 
-// A) Bottom Axis
-// ==============
-
-// We create a group element to nest our bottom axes labels.
 svg.append("g").attr("class", "xText");
-// xText will allows us to select the group without excess code.
+
 var xText = d3.select(".xText");
 
-// We give xText a transform property that places it at the bottom of the chart.
-// By nesting this attribute in a function, we can easily change the location of the label group
-// whenever the width of the window changes.
 function xTextRefresh() {
   xText.attr(
     "transform",
@@ -60,47 +51,43 @@ function xTextRefresh() {
 }
 xTextRefresh();
 
-// Now we use xText to append three text SVG files, with y coordinates specified to space out the values.
-// 1. Poverty
+// 1. Deaths
 xText
   .append("text")
   .attr("y", -26)
-  .attr("data-name", "cases")
+  .attr("data-name", "Deaths")
   .attr("data-axis", "x")
   .attr("class", "aText active x")
-  .text("Cases");
-// 2. Age
+  .text("Deaths");
+// 2. hosps
 xText
   .append("text")
   .attr("y", 0)
-  .attr("data-name", "hosps")
+  .attr("data-name", "Hospitalizaions")
   .attr("data-axis", "x")
   .attr("class", "aText inactive x")
-  .text("Hosps");
-// 3. Income
+  .text("Hospitalizaions");
+// 3. Cases
 xText
   .append("text")
   .attr("y", 26)
-  .attr("data-name", "deaths")
+  .attr("data-name", "Cases")
   .attr("data-axis", "x")
   .attr("class", "aText inactive x")
-  .text("Deaths");
+  .text("Cases");
 
-// B) Left Axis
-// ============
+// Y axis
 
-// Specifying the variables like this allows us to make our transform attributes more readable.
 var leftTextX = margin + tPadLeft;
 var leftTextY = (height + labelArea) / 2 - labelArea;
 
-// We add a second label group, this time for the axis left of the chart.
+
 svg.append("g").attr("class", "yText");
 
-// yText will allows us to select the group without excess code.
+
 var yText = d3.select(".yText");
 
-// Like before, we nest the group's transform attr in a function
-// to make changing it on window change an easy operation.
+
 function yTextRefresh() {
   yText.attr(
     "transform",
@@ -110,58 +97,53 @@ function yTextRefresh() {
 yTextRefresh();
 
 // Now we append the text.
-// 1. Obesity
+// 1. Cases Y
 yText
   .append("text")
   .attr("y", -26)
-  .attr("data-name", "cases2")
+  .attr("data-name", "Cases")
   .attr("data-axis", "y")
   .attr("class", "aText active y")
   .text("Caes");
 
-// 2. Smokes
+// 2. Hospital Y
 yText
   .append("text")
   .attr("x", 0)
-  .attr("data-name", "hosps2")
+  .attr("data-name", "Hospitalizaions")
   .attr("data-axis", "y")
   .attr("class", "aText inactive y")
-  .text("Hospi");
+  .text("Hospitalizaions");
 
-// 3. Lacks Healthcare
+// 3. Deaths Y
 yText
   .append("text")
   .attr("y", 26)
-  .attr("data-name", "deaths2")
+  .attr("data-name", "Deaths")
   .attr("data-axis", "y")
   .attr("class", "aText inactive y")
-  .text("deaths");
+  .text("Deaths");
 
-// 2. Import our .csv file.
-// ========================
-// This data file includes state-by-state demographic data from the US Census
-// and measurements from health risks obtained
-// by the Behavioral Risk Factor Surveillance System.
 
-// Import our CSV data with d3's .csv import method.
-d3.csv("static/data/correlation_data2.csv").then(function(data) {
-  // Visualize the data
-  visualize(data);
-  console.log(data);
+
+// Import CSV 
+d3.csv("static/data/correlation_data2.csv").then(function(correlationdata) {
+  visualize(correlationdata);
+  //console.log(correlationData);
+
+    var i;
+    for (i = correlationData.length -1; i>=0; i-= 1) {
+      if (correlationData[i].Cases === 0 && correlationData[i].Deaths === 0) {
+        correlationData.splice(i, 1);
+      };
+    }
+    console.log(correlationData)
 });
 
-// 3. Create our visualization function
-// ====================================
-// We called a "visualize" function on the data obtained with d3's .csv method.
-// This function handles the visual manipulation of all elements dependent on the data.
 function visualize(theData) {
-  // PART 1: Essential Local Variables and Functions
-  // =================================
-  // curX and curY will determine what data gets represented in each axis.
-  // We designate our defaults here, which carry the same names
-  // as the headings in their matching .csv data file.
-  var curX = "cases";
-  var curY = "hosps2";
+  
+  var curX = "Deaths";
+  var curY = "Cases";
 
   // We also save empty variables for our the min and max values of x and y.
   // this will allow us to alter the values in functions and remove repetitious code.
@@ -181,7 +163,7 @@ function visualize(theData) {
       // Grab the state name.
       var theState = "<div>" + d.Boroughs + "</div>";
       // Snatch the y value's key and value.
-      var theY = "<div>" + curY + ": " + d[curY] + "%</div>";
+      var theY = "<div>" + curY + ": " + parseFloat(d[curY])/parseFlow(d['cases']) + "%</div>";
       // If the x key is poverty
       if (curX === "cases") {
         // Grab the x key and a version of the value formatted to show percentage
@@ -190,12 +172,14 @@ function visualize(theData) {
       else {
         // Otherwise
         // Grab the x key and a version of the value formatted to include commas after every third digit.
+        
         theX = "<div>" +
           curX +
           ": " +
           parseFloat(d[curX]).toLocaleString("en") +
           "</div>";
       }
+      
       // Display what we capture.
       return theState + theX + theY;
     });
@@ -316,7 +300,7 @@ function visualize(theData) {
     })
     .attr("r", circRadius)
     .attr("class", function(d) {
-      return "stateCircle " + d.Boroughs;
+      return "stateCircle " + d.Abbr;
     })
     // Hover rules
     .on("mouseover", function(d) {
@@ -339,7 +323,7 @@ function visualize(theData) {
     .append("text")
     // We return the abbreviation to .text, which makes the text the abbreviation.
     .text(function(d) {
-      return d.Boroughs;
+      return d.Abbr;
     })
     // Now place the text using our scale.
     .attr("dx", function(d) {
@@ -358,19 +342,17 @@ function visualize(theData) {
       // Show the tooltip
       toolTip.show(d);
       // Highlight the state circle's border
-      d3.select("." + d.Boroughs).style("stroke", "#323232");
+      d3.select("." + d.Abbr).style("stroke", "#323232");
     })
     .on("mouseout", function(d) {
       // Remove tooltip
       toolTip.hide(d);
       // Remove highlight
-      d3.select("." + d.Boroughs).style("stroke", "#e3e3e3");
+      d3.select("." + d.Abbr).style("stroke", "#e3e3e3");
     });
 
-  // Part 4: Make the Graph Dynamic
-  // ==========================
-  // This section will allow the user to click on any label
-  // and display the data it references.
+  // Make the Graph Dynamic
+  
 
   // Select all axis text and add this d3 click event.
   d3.selectAll(".aText").on("click", function() {
