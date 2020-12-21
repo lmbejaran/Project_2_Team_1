@@ -22,18 +22,8 @@ var svg = d3
   .attr("class", "chart");
 
 // Set the radius for each dot that will appear in the graph.
-var circRadius;
-function crGet() {
-  if (width >= 530) {
-    circRadius = 5;
-  }
-  else {
-    circRadius = 10;
-  }
-}
-crGet();
+var circRadius = 10;
 
-// X Axis
 
 svg.append("g").attr("class", "xText");
 
@@ -130,7 +120,7 @@ yText
 d3.csv("static/data/correlation_data2.csv").then(function(correlationdata) {
   visualize(correlationdata);
   //console.log(correlationData);
-
+});
     var i;
     for (i = correlationData.length -1; i>=0; i-= 1) {
       if (correlationData[i].Cases === 0 && correlationData[i].Deaths === 0) {
@@ -138,7 +128,7 @@ d3.csv("static/data/correlation_data2.csv").then(function(correlationdata) {
       };
     }
     console.log(correlationData)
-});
+
 
 function visualize(theData) {
   
@@ -153,35 +143,39 @@ function visualize(theData) {
   var yMax;
 
   // This function allows us to set up tooltip rules (see d3-tip.js).
-  var toolTip = d3
-    .tip()
-    .attr("class", "d3-tip")
-    .offset([40, -60])
+  // var toolTip = d3
+  //   .tip()
+  //   .attr("class", "d3-tip")
+  //   .offset([40, -60])
+  //   .html(function(d) {
+  //     // x key
+  //     var theX;
+  //     // Grab the state name.
+  //     var theState = "<div>" + d.Boroughs + "</div>";
+  //     // Snatch the y value's key and value.
+  //     var theY = "<div>" + curY + ": " + d[curY] + "%</div>";
+  //     // If the x key is poverty
+  //     if (curX === "cases") {
+  //       // Grab the x key and a version of the value formatted to show percentage
+  //       theX = "<div>" + curX + ": " + d[curX] + "%</div>";
+  //     }
+  //     else {
+  //       // Otherwise
+  //       // Grab the x key and a version of the value formatted to include commas after every third digit.
+  //       theX = "<div>" +
+  //         curX +
+  //         ": " +
+  //         parseFloat(d[curX]).toLocaleString("en") +
+  //         "</div>";
+  //     }
+  //     // Display what we capture.
+  //     return theState + theX + theY;
+  //   });
+  var toolTip = d3.tip()
+    .attr("class", "tooltip")
+    .offset([80, -60])
     .html(function(d) {
-      // x key
-      var theX;
-      // Grab the state name.
-      var theState = "<div>" + d.Boroughs + "</div>";
-      // Snatch the y value's key and value.
-      var theY = "<div>" + curY + ": " + parseFloat(d[curY])/parseFlow(d['cases']) + "%</div>";
-      // If the x key is poverty
-      if (curX === "cases") {
-        // Grab the x key and a version of the value formatted to show percentage
-        theX = "<div>" + curX + ": " + d[curX] + "%</div>";
-      }
-      else {
-        // Otherwise
-        // Grab the x key and a version of the value formatted to include commas after every third digit.
-        
-        theX = "<div>" +
-          curX +
-          ": " +
-          parseFloat(d[curX]).toLocaleString("en") +
-          "</div>";
-      }
-      
-      // Display what we capture.
-      return theState + theX + theY;
+      return (`${d.Boroughs}<br>Cases: ${d.Cases}<br>Hospitalized: ${d.Hospitalizaions}<br>Deaths: ${d.Deaths}`);
     });
   // Call the toolTip function.
   svg.call(toolTip);
@@ -300,7 +294,7 @@ function visualize(theData) {
     })
     .attr("r", circRadius)
     .attr("class", function(d) {
-      return "stateCircle " + d.Abbr;
+      return "boroughLabel " + d.Abbr;
     })
     // Hover rules
     .on("mouseover", function(d) {
@@ -321,22 +315,18 @@ function visualize(theData) {
   // and place them in the center of our dots.
   theCircles
     .append("text")
-    // We return the abbreviation to .text, which makes the text the abbreviation.
     .text(function(d) {
       return d.Abbr;
     })
-    // Now place the text using our scale.
+    
     .attr("dx", function(d) {
       return xScale(d[curX]);
     })
     .attr("dy", function(d) {
-      // When the size of the text is the radius,
-      // adding a third of the radius to the height
-      // pushes it into the middle of the circle.
-      return yScale(d[curY]) + circRadius / 2.5;
+     return yScale(d[curY]) + circRadius / 2.5;
     })
     .attr("font-size", circRadius)
-    .attr("class", "stateText")
+    .attr("class", "boroughText")
     // Hover Rules
     .on("mouseover", function(d) {
       // Show the tooltip
@@ -397,7 +387,7 @@ function visualize(theData) {
         });
 
         // We need change the location of the state texts, too.
-        d3.selectAll(".stateText").each(function() {
+        d3.selectAll(".boroughText").each(function() {
           // We give each state text the same motion tween as the matching circle.
           d3
             .select(this)
@@ -440,7 +430,7 @@ function visualize(theData) {
         });
 
         // We need change the location of the state texts, too.
-        d3.selectAll(".stateText").each(function() {
+        d3.selectAll(".boroughText").each(function() {
           // We give each state text the same motion tween as the matching circle.
           d3
             .select(this)
@@ -510,7 +500,7 @@ function visualize(theData) {
 
     // We need change the location and size of the state texts, too.
     d3
-      .selectAll(".stateText")
+      .selectAll(".boroughText")
       .attr("dy", function(d) {
         return yScale(d[curY]) + circRadius / 3;
       })
