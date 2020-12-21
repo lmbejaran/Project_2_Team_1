@@ -1,0 +1,87 @@
+body {
+    background-color: #19202A;
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+.title {
+    color:blue;
+
+}
+
+.nav_bar {
+    color: white;
+    background-color: black;
+    height: 60px;
+    width: 100%;
+    font: 50px;
+}
+
+.nav_bar select {
+    margin-top: 10px;
+    margin-left: 5%;
+    height: 40px;
+    width: 200px;
+}
+
+.country_name {
+    text-align: center;
+    color: white;
+}
+
+.heatmap {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
+    border: 2px solid black;
+}
+
+    
+
+}
+
+#bubble_map {
+    padding: 2%;
+    box-sizing: border-box;
+    border: 2px solid black;
+    margin: 1%;
+}
+
+.graphs {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.graph {
+    border: 2px solid black;
+    color: white;
+    padding: 1%;
+    margin: 1%;
+    opacity: 0.6;
+    
+}
+
+#confirmed_cases {
+
+}
+
+#deaths {
+
+}
+
+#comparison {
+
+}
+
+/* medi query */
+
+@media only screen and (max-width: 1150px) {
+    .graphs {
+        flex-direction: column;
+    }
+  }
