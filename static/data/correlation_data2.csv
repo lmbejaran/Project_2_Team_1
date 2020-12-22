@@ -1,7 +1,6 @@
-﻿Boroughs,Cases,Hospitalizaions,Deaths,Total_Cases,Total_Hosp,Total_Death,
-Manhattan,34702.00,8280.00,2548.00,261806.00,58377.00,19359.00,
-Queens,77519.00,18030.00,6049.00,,,,
-Brooklyn,75509.00,16776.00,5776.00,,,,
-Bronx,56521.00,12727.00,4070.00,,,,
-Staten Island,17555.00,2564.00,916.00,,,,
-,,,,,,,
+﻿Boroughs,Abbr,Cases,Hospitalizaions,Deaths
+Manhattan,MN,34702,8280,2548
+Queens,QN,77519,18030,6049
+Brooklyn,BK,75509,16776,5776
+Bronx,BX,56521,12727,4070
+Staten Island,SI,17555,2564,916
